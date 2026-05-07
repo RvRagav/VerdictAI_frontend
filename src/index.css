@@ -1,0 +1,340 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Core palette — dark violet/purple with neon accents */
+    --ink:       #0a0710;
+    --ink-2:     #0f0a18;
+    --surface:   #15101f;
+    --surface-2: #1a1527;
+    --line:      rgba(148, 123, 220, 0.12);
+    --line-2:    rgba(148, 123, 220, 0.06);
+
+    --violet:    #8b5cf6;
+    --violet-1:  #a78bfa;
+    --violet-2:  #c4b5fd;
+    --violet-3:  #ddd6fe;
+    --pink:      #f0abfc;
+    --indigo:    #6366f1;
+
+    --ink-text:    #f5f3ff;
+    --ink-muted:   #a1a1aa;
+    --ink-dim:     #71717a;
+    --ink-faint:   #3f3f46;
+  }
+
+  html, body, #root {
+    height: 100%;
+    background: var(--ink);
+    color: var(--ink-text);
+  }
+
+  body {
+    font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
+  }
+
+  .serif {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    letter-spacing: -0.02em;
+  }
+
+  .mono {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: rgba(167, 139, 250, 0.3);
+    color: #f5f3ff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(148, 123, 220, 0.15);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 123, 220, 0.25);
+  }
+}
+
+@layer components {
+  /* ─── The signature glowing purple orb ─────────────────────────── */
+
+  .orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(80px);
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .orb-violet {
+    background: radial-gradient(circle, #a78bfa 0%, #8b5cf6 35%, transparent 70%);
+  }
+
+  .orb-pink {
+    background: radial-gradient(circle, #f0abfc 0%, #c084fc 35%, transparent 70%);
+  }
+
+  .orb-indigo {
+    background: radial-gradient(circle, #818cf8 0%, #6366f1 35%, transparent 70%);
+  }
+
+  /* Subtle grid background used on hero sections */
+  .grid-pattern {
+    background-image:
+      linear-gradient(to right, rgba(148, 123, 220, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 123, 220, 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* ─── Glass card — the everyday surface ─────────────────────────── */
+
+  .card {
+    background: rgba(21, 16, 31, 0.65);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid rgba(148, 123, 220, 0.08);
+    border-radius: 20px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.02) inset,
+      0 0 0 1px rgba(148, 123, 220, 0.02),
+      0 8px 24px -12px rgba(0, 0, 0, 0.4);
+  }
+
+  .card-hover {
+    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-1px);
+    border-color: rgba(148, 123, 220, 0.2);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 0 0 1px rgba(148, 123, 220, 0.06),
+      0 20px 40px -16px rgba(0, 0, 0, 0.5),
+      0 0 60px -20px rgba(139, 92, 246, 0.3);
+  }
+
+  /* Elevated card with subtle violet inner light */
+  .card-lift {
+    background: linear-gradient(180deg, rgba(26, 21, 39, 0.8) 0%, rgba(21, 16, 31, 0.9) 100%);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(148, 123, 220, 0.12);
+    border-radius: 20px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 0 0 1px rgba(148, 123, 220, 0.04),
+      0 20px 40px -16px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ─── Buttons ──────────────────────────────────────────────────── */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.125rem;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    transition: all 200ms ease;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(180deg, #c4b5fd 0%, #a78bfa 100%);
+    color: #1a1527;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.3) inset,
+      0 8px 20px -6px rgba(167, 139, 250, 0.4),
+      0 0 0 1px rgba(167, 139, 250, 0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.4) inset,
+      0 12px 28px -6px rgba(167, 139, 250, 0.5),
+      0 0 0 1px rgba(167, 139, 250, 0.5);
+  }
+
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.03);
+    color: #f5f3ff;
+    border: 1px solid rgba(148, 123, 220, 0.15);
+  }
+  .btn-ghost:hover {
+    background: rgba(148, 123, 220, 0.08);
+    border-color: rgba(148, 123, 220, 0.3);
+  }
+
+  .btn-dark {
+    background: #15101f;
+    color: #f5f3ff;
+    border: 1px solid rgba(148, 123, 220, 0.1);
+  }
+  .btn-dark:hover {
+    background: #1a1527;
+    border-color: rgba(148, 123, 220, 0.2);
+  }
+
+  /* ─── Input fields ─────────────────────────────────────────────── */
+
+  .input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    background: rgba(10, 7, 16, 0.6);
+    border: 1px solid rgba(148, 123, 220, 0.12);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    color: #f5f3ff;
+    outline: none;
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .input::placeholder { color: #52525b; }
+  .input:focus {
+    border-color: rgba(167, 139, 250, 0.5);
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+  }
+
+  /* ─── Chip / pill ──────────────────────────────────────────────── */
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .chip-violet  { background: rgba(167, 139, 250, 0.1); color: #c4b5fd; border-color: rgba(167, 139, 250, 0.2); }
+  .chip-emerald { background: rgba(52, 211, 153, 0.08);  color: #6ee7b7; border-color: rgba(52, 211, 153, 0.2); }
+  .chip-amber   { background: rgba(251, 191, 36, 0.08);  color: #fcd34d; border-color: rgba(251, 191, 36, 0.2); }
+  .chip-rose    { background: rgba(251, 113, 133, 0.08); color: #fda4af; border-color: rgba(251, 113, 133, 0.2); }
+  .chip-sky     { background: rgba(56, 189, 248, 0.08);  color: #7dd3fc; border-color: rgba(56, 189, 248, 0.2); }
+  .chip-slate   { background: rgba(148, 123, 220, 0.05); color: #a1a1aa; border-color: rgba(148, 123, 220, 0.1); }
+
+  /* ─── Nav sidebar item ─────────────────────────────────────────── */
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #a1a1aa;
+    transition: all 180ms ease;
+    position: relative;
+  }
+  .nav-item:hover {
+    color: #f5f3ff;
+    background: rgba(148, 123, 220, 0.05);
+  }
+  .nav-item-active {
+    color: #f5f3ff;
+    background: linear-gradient(90deg, rgba(167, 139, 250, 0.12) 0%, rgba(167, 139, 250, 0.02) 100%);
+    border-left: 2px solid #a78bfa;
+    padding-left: calc(0.75rem - 2px);
+  }
+
+  /* ─── Table ────────────────────────────────────────────────────── */
+
+  .table-header {
+    text-align: left;
+    padding: 0.625rem 1rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: #71717a;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .table-cell {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+    color: #e4e4e7;
+    border-top: 1px solid rgba(148, 123, 220, 0.04);
+  }
+
+  /* ─── Shimmer / loading ────────────────────────────────────────── */
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(148, 123, 220, 0.04) 0%,
+      rgba(148, 123, 220, 0.12) 50%,
+      rgba(148, 123, 220, 0.04) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+  }
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ─── Typography ──────────────────────────────────────────────── */
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 3.75rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: #f5f3ff;
+  }
+
+  .section-title {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: #a78bfa;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .display {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .glow-violet {
+    box-shadow:
+      0 0 40px -8px rgba(167, 139, 250, 0.3),
+      0 0 0 1px rgba(167, 139, 250, 0.2);
+  }
+
+  .text-gradient-violet {
+    background: linear-gradient(135deg, #c4b5fd 0%, #f0abfc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bg-noise {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.4'/></svg>");
+    opacity: 0.015;
+  }
+}
