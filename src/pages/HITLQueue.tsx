@@ -112,7 +112,7 @@ function QueueInner({ tenderId, onOpen }: { tenderId: string; onOpen: (evalId: s
 
   const visible = useMemo(() => {
     if (filter === 'mandatory') return queue.filter(q => q.route === 'mandatory_review')
-    if (filter === 'hitl')      return queue.filter(q => q.route === 'hitl_review')
+    if (filter === 'hitl') return queue.filter(q => q.route === 'hitl_review')
     return queue
   }, [queue, filter])
 
@@ -169,9 +169,9 @@ function QueueInner({ tenderId, onOpen }: { tenderId: string; onOpen: (evalId: s
 
       {/* Filter tabs */}
       <div className="flex items-center gap-1.5 px-1.5 py-1.5 rounded-full border border-[rgba(148,123,220,0.1)] bg-[rgba(21,16,31,0.6)] w-fit">
-        <TabButton active={filter === 'all'}       onClick={() => setFilter('all')}       icon={ListFilter}  label="All"       count={counts.all} />
-        <TabButton active={filter === 'mandatory'} onClick={() => setFilter('mandatory')} icon={ShieldAlert} label="Mandatory" count={counts.mandatory} variant="rose"  />
-        <TabButton active={filter === 'hitl'}      onClick={() => setFilter('hitl')}      icon={Eye}         label="HITL"      count={counts.hitl}      variant="amber" />
+        <TabButton active={filter === 'all'} onClick={() => setFilter('all')} icon={ListFilter} label="All" count={counts.all} />
+        <TabButton active={filter === 'mandatory'} onClick={() => setFilter('mandatory')} icon={ShieldAlert} label="Mandatory" count={counts.mandatory} variant="rose" />
+        <TabButton active={filter === 'hitl'} onClick={() => setFilter('hitl')} icon={Eye} label="HITL" count={counts.hitl} variant="amber" />
       </div>
 
       {/* Queue list */}
@@ -194,11 +194,10 @@ function QueueInner({ tenderId, onOpen }: { tenderId: string; onOpen: (evalId: s
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ delay: i * 0.04, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                   onClick={() => onOpen(item.evaluation_id)}
-                  className={`w-full text-left card card-hover p-4 flex items-center gap-4 relative overflow-hidden ${
-                    isMandatory
+                  className={`w-full text-left card card-hover p-4 flex items-center gap-4 relative overflow-hidden ${isMandatory
                       ? 'before:content-[""] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[3px] before:bg-gradient-to-b before:from-amber-400/80 before:via-amber-400/40 before:to-transparent'
                       : ''
-                  }`}
+                    }`}
                 >
                   {/* Left: route + bidder */}
                   <div className="flex items-center gap-2 shrink-0 w-56">
@@ -207,14 +206,14 @@ function QueueInner({ tenderId, onOpen }: { tenderId: string; onOpen: (evalId: s
                       <div className="w-6 h-6 rounded-md bg-[rgba(148,123,220,0.08)] border border-[rgba(148,123,220,0.12)] flex items-center justify-center shrink-0">
                         <Building2 className="w-3 h-3 text-[#c4b5fd]" strokeWidth={1.8} />
                       </div>
-                      <div className="text-[12.5px] text-zinc-200 truncate">{item.bidder}</div>
+                      <div className="text-[12.5px] text-zinc-200 truncate">{(item as any).bidder_name || (item as any).bidder || ''}</div>
                     </div>
                   </div>
 
                   {/* Middle: criterion */}
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] text-zinc-100 truncate">{item.criterion}</div>
-                    <div className="text-[11px] text-zinc-500 mt-0.5 truncate">{item.reason}</div>
+                    <div className="text-[13px] text-zinc-100 truncate">{(item as any).criterion_text || (item as any).criterion || ''}</div>
+                    <div className="text-[11px] text-zinc-500 mt-0.5 truncate">{(item as any).routing_reason || (item as any).reason || ''}</div>
                   </div>
 
                   {/* Right: confidence ring + arrow */}
@@ -251,8 +250,8 @@ function TabButton({
 }) {
   const accent =
     variant === 'amber' ? 'text-amber-300' :
-    variant === 'rose'  ? 'text-rose-300'  :
-                          'text-[#c4b5fd]'
+      variant === 'rose' ? 'text-rose-300' :
+        'text-[#c4b5fd]'
   const bg = active
     ? 'bg-[rgba(167,139,250,0.1)] border-[rgba(167,139,250,0.3)] text-white'
     : 'bg-transparent border-transparent text-zinc-400 hover:text-zinc-200'

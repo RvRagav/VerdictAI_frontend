@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { CheckCircle2, RotateCcw, Lock, ShieldAlert, UserCog } from 'lucide-react'
 import OverrideModal from './OverrideModal'
 
@@ -40,11 +41,11 @@ export default function DecisionPanel({
     setShowOverride(false)
   }
 
-  const confirmDisabled  = !canConfirm  || !officerId.trim() || loading
+  const confirmDisabled = !canConfirm || !officerId.trim() || loading
   const overrideDisabled = !canOverride || !officerId.trim() || loading
 
   return (
-    <div className="card-lift p-5 relative overflow-hidden">
+    <div className="card-lift p-5 relative overflow-visible">
       <div className="absolute -top-10 -right-10 w-40 h-40 orb orb-violet opacity-15 pointer-events-none" aria-hidden />
 
       <div className="relative">
@@ -119,11 +120,12 @@ export default function DecisionPanel({
         )}
       </div>
 
-      {showOverride && (
+      {showOverride && createPortal(
         <OverrideModal
           onSubmit={handleOverride}
           onClose={() => setShowOverride(false)}
-        />
+        />,
+        document.body
       )}
     </div>
   )

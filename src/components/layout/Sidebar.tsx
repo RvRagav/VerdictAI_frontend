@@ -26,7 +26,7 @@ export default function Sidebar() {
   const location = useLocation()
 
   return (
-    <aside className="w-60 shrink-0 h-screen sticky top-0 flex flex-col px-4 py-5 border-r border-[rgba(148,123,220,0.08)] bg-[#0a0710]/80 backdrop-blur-xl z-30">
+    <aside className="w-60 shrink-0 h-screen fixed top-0 left-0 flex flex-col px-4 py-5 border-r border-[rgba(148,123,220,0.08)] bg-[#0a0710]/80 backdrop-blur-xl z-30">
       {/* Brand */}
       <NavLink to="/" className="flex items-center gap-2.5 px-1 mb-8 group">
         <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-[#c4b5fd] to-[#8b5cf6] flex items-center justify-center glow-violet shrink-0">

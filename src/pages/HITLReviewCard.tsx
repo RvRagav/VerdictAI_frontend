@@ -234,14 +234,14 @@ export default function HITLReviewCard() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="space-y-4"
+          className="space-y-4 max-h-[calc(100vh-12rem)] overflow-y-auto pr-1"
         >
           <AnalysisPanel
             verdict={card.analysis.verdict}
             confidence={card.analysis.confidence}
             evaluationMethod={card.analysis.evaluation_method}
             routingReason={card.analysis.routing_reason}
-            flags={card.analysis.flags}
+            flags={card.analysis.flags || []}
             confidenceNote={explanation?.confidence_note}
             nextAction={explanation?.next_action}
             partialReasons={derivePartialReasons(card, explanation)}
@@ -410,7 +410,7 @@ function derivePartialReasons(
     }
   }
 
-  if (card.analysis?.flags?.includes('entity_mismatch')) {
+  if ((card.analysis?.flags || []).includes('entity_mismatch')) {
     out.push('Bidder name on documents differs from registered entity.')
   }
 

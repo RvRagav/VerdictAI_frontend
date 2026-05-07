@@ -13,7 +13,7 @@ interface EvidencePanelProps {
   extractedValue: unknown
   sourceDocumentId: string
   sourcePageNumber: number
-  sourceBbox: BoundingBox
+  sourceBbox: BoundingBox | null | undefined
   ocrConfidence: number
   extractionConfidence: number
   entityMatch: EntityMatchResult | null
@@ -70,24 +70,23 @@ export default function EvidencePanel({
 
       {/* Confidence block */}
       <div className="space-y-2.5 mb-3">
-        <ConfRow label="OCR confidence"        value={ocrConfidence} />
+        <ConfRow label="OCR confidence" value={ocrConfidence} />
         <ConfRow label="Extraction confidence" value={extractionConfidence} />
       </div>
 
       {/* Source ref */}
       <div className="flex items-center gap-2 text-[11px] text-zinc-500 mono pt-3 border-t border-[rgba(148,123,220,0.06)]">
         <MapPin className="w-3 h-3 text-zinc-600" strokeWidth={1.8} />
-        <span>doc {sourceDocumentId.slice(0, 8)} · p{sourcePageNumber}</span>
+        <span>doc {(sourceDocumentId || '').slice(0, 8) || '—'} · p{sourcePageNumber ?? '—'}</span>
       </div>
 
       {/* Entity match */}
       {entityMatch && (
         <div
-          className={`mt-3 rounded-xl p-3 border ${
-            entityMatch.is_match
+          className={`mt-3 rounded-xl p-3 border ${entityMatch.is_match
               ? 'bg-emerald-500/5 border-emerald-500/20'
               : 'bg-amber-500/5 border-amber-500/20'
-          }`}
+            }`}
         >
           <div className="flex items-center gap-1.5 mb-1">
             <Fingerprint
@@ -154,14 +153,18 @@ function PageMock({ pageNumber }: { pageNumber: number }) {
   )
 }
 
-function normalizeBbox(b: BoundingBox) {
+function normalizeBbox(b: BoundingBox | null | undefined) {
+  if (!b) {
+    // No bbox — draw a generic rectangle in the center
+    return { left: '30%', top: '35%', width: '40%', height: '12%' }
+  }
   // bbox fields can be normalized floats (0-1) or pixel ints. Assume 0-1.
   const { x_min, y_min, x_max, y_max } = b
   if ([x_min, y_min, x_max, y_max].every(v => v >= 0 && v <= 1)) {
     return {
-      left:   `${x_min * 100}%`,
-      top:    `${y_min * 100}%`,
-      width:  `${Math.max((x_max - x_min) * 100, 2)}%`,
+      left: `${x_min * 100}%`,
+      top: `${y_min * 100}%`,
+      width: `${Math.max((x_max - x_min) * 100, 2)}%`,
       height: `${Math.max((y_max - y_min) * 100, 2)}%`,
     }
   }

@@ -26,13 +26,56 @@ import RouteBadge from '../components/evaluation/RouteBadge'
 import EmptyState from '../components/common/EmptyState'
 import StatusChip from '../components/common/StatusChip'
 import { useEvaluations } from '../hooks/useEvaluation'
-import { useTender } from '../hooks/useTender'
+import { useTender, useTenders } from '../hooks/useTender'
 import { triggerEvaluation } from '../api/client'
 import type { Evaluation } from '../types'
 
 export default function EvaluationView() {
   const [searchParams] = useSearchParams()
   const tenderId = searchParams.get('tender') || ''
+
+  // If no tender in URL, try to pick the most recent one that's in an evaluable state
+  if (!tenderId) {
+    return <EvaluationTenderPicker />
+  }
+
+  return <EvaluationInner tenderId={tenderId} />
+}
+
+function EvaluationTenderPicker() {
+  const navigate = useNavigate()
+  const { tenders, loading } = useTenders()
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-full border-2 border-[rgba(167,139,250,0.2)] border-t-[#c4b5fd] animate-spin" />
+          <div className="text-[11px] uppercase tracking-[0.15em] text-zinc-500">Loading tenders</div>
+        </div>
+      </div>
+    )
+  }
+
+  // Auto-select the first tender that's in SCHEMA_APPROVED or later
+  const evaluable = tenders.filter(t =>
+    ['SCHEMA_APPROVED', 'EVALUATING', 'HITL_PENDING', 'EVALUATION_COMPLETE', 'REPORT_GENERATED'].includes(t.status)
+  )
+  if (evaluable.length === 1) {
+    navigate(`/evaluation?tender=${evaluable[0].id}`, { replace: true })
+    return null
+  }
+
+  return (
+    <EmptyState
+      title="No tender selected"
+      description="Pick a tender from the dashboard to view bidder evaluations."
+      action={{ label: 'Go to dashboard', onClick: () => navigate('/') }}
+    />
+  )
+}
+
+function EvaluationInner({ tenderId }: { tenderId: string }) {
   const navigate = useNavigate()
   const { tender } = useTender(tenderId || undefined)
   const { evaluations, summary, loading, error, refetch } = useEvaluations(tenderId || undefined)
@@ -67,22 +110,12 @@ export default function EvaluationView() {
   const totals = useMemo(() => {
     const total = evaluations.length
     const autoCommit = evaluations.filter(e => e.route === 'auto_commit').length
-    const hitl       = evaluations.filter(e => e.route === 'hitl_review').length
-    const mandatory  = evaluations.filter(e => e.route === 'mandatory_review').length
-    const passed     = evaluations.filter(e => e.verdict === 'PASS').length
-    const passRate   = total > 0 ? Math.round((passed / total) * 100) : 0
+    const hitl = evaluations.filter(e => e.route === 'hitl_review').length
+    const mandatory = evaluations.filter(e => e.route === 'mandatory_review').length
+    const passed = evaluations.filter(e => e.verdict === 'PASS').length
+    const passRate = total > 0 ? Math.round((passed / total) * 100) : 0
     return { total, autoCommit, hitl, mandatory, passRate }
   }, [evaluations])
-
-  if (!tenderId) {
-    return (
-      <EmptyState
-        title="No tender selected"
-        description="Pick a tender from the dashboard to view bidder evaluations."
-        action={{ label: 'Go to dashboard', onClick: () => navigate('/') }}
-      />
-    )
-  }
 
   if (loading) {
     return (
@@ -283,9 +316,9 @@ function BidderBlock({
           <div className="text-[10.5px] text-zinc-600 mono mt-0.5">{bidderId.slice(0, 12)}</div>
         </div>
         <div className="flex items-center gap-1.5">
-          <CountCell color="emerald" value={pass}   label="pass" />
-          <CountCell color="rose"    value={fail}   label="fail" />
-          <CountCell color="amber"   value={review} label="rev"  />
+          <CountCell color="emerald" value={pass} label="pass" />
+          <CountCell color="rose" value={fail} label="fail" />
+          <CountCell color="amber" value={review} label="rev" />
         </div>
         <ChevronRight
           className={`w-4 h-4 text-zinc-500 transition-transform ${expanded ? 'rotate-90' : ''}`}
@@ -366,12 +399,12 @@ function BidderBlock({
 function CountCell({ color, value, label }: { color: 'emerald' | 'rose' | 'amber'; value: number; label: string }) {
   const fg =
     color === 'emerald' ? 'text-emerald-300' :
-    color === 'rose'    ? 'text-rose-300'    :
-                          'text-amber-300'
+      color === 'rose' ? 'text-rose-300' :
+        'text-amber-300'
   const bg =
     color === 'emerald' ? 'bg-emerald-500/10 border-emerald-500/20' :
-    color === 'rose'    ? 'bg-rose-500/10 border-rose-500/20'       :
-                          'bg-amber-500/10 border-amber-500/20'
+      color === 'rose' ? 'bg-rose-500/10 border-rose-500/20' :
+        'bg-amber-500/10 border-amber-500/20'
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[10.5px] ${bg}`}>
       <span className={`font-semibold tabular-nums ${fg}`}>{value}</span>

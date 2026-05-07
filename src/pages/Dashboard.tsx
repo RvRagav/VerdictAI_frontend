@@ -45,6 +45,35 @@ function Counter({ value, duration = 1200 }: { value: number; duration?: number 
   return <span className="tabular-nums">{display}</span>
 }
 
+/**
+ * Route a tender click to the correct page based on its current status.
+ * Early states → Ingest. Schema states → Schema Review. Post-approval → Evaluation.
+ */
+function tenderRoute(id: string, status: string): string {
+  switch (status) {
+    case 'DOCUMENTS_UPLOADED':
+    case 'PROCESSING_OCR':
+    case 'OCR_COMPLETE':
+      return `/upload?tender=${id}`
+    case 'EXTRACTING_CRITERIA':
+    case 'SCHEMA_PENDING_REVIEW':
+      return `/schema-review?tender=${id}`
+    case 'SCHEMA_APPROVED':
+    case 'DEBARMENT_CHECK':
+    case 'DEBARMENT_FLAGGED':
+    case 'EVALUATING':
+    case 'VERDICTS_COMPUTED':
+      return `/evaluation?tender=${id}`
+    case 'HITL_PENDING':
+      return `/hitl?tender=${id}`
+    case 'EVALUATION_COMPLETE':
+    case 'REPORT_GENERATED':
+      return `/reports?tender=${id}`
+    default:
+      return `/upload?tender=${id}`
+  }
+}
+
 export default function Dashboard() {
   const { tenders, loading, error, create } = useTenders()
   const navigate = useNavigate()
@@ -321,7 +350,7 @@ export default function Dashboard() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.4 + i * 0.04 }}
-                      onClick={() => navigate(`/upload?tender=${t.id}`)}
+                      onClick={() => navigate(tenderRoute(t.id, t.status))}
                       className="group cursor-pointer hover:bg-[rgba(148,123,220,0.03)] transition-colors"
                     >
                       <td className="table-cell">
